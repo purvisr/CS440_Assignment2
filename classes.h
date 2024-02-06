@@ -3,9 +3,9 @@ Name: Robin Purvis
 Email: purvisr@oregonstate.edu
 ONID: 932918937
 
-Name:
-Email:
-ONID:
+Name: Nicholas Wisler
+Email: wislerni@oregonstate.edu
+ONID: 933832326
 */
 
 #include <string>
@@ -14,7 +14,6 @@ ONID:
 #include <sstream>
 #include <fstream>
 #include <map>
-
 using namespace std;
 
 class Record {
@@ -74,6 +73,7 @@ private:
 
         buffer.push_back(record);
         currentBlockSize += recordSize;
+        
     }
 
     void writeBufferToFile() {
@@ -83,25 +83,19 @@ private:
             exit(EXIT_FAILURE);
         }
 
-        // Write records to file
-        for (size_t i = 0; i < buffer.size(); ++i) {
+        
+    // Write records to file
+       for (size_t i = 0; i < buffer.size(); ++i) {
             file.write(reinterpret_cast<const char*>(&buffer[i].id), sizeof(int));
             file.write(buffer[i].name.c_str(), buffer[i].name.size() + 1);
             file.write(buffer[i].bio.c_str(), buffer[i].bio.size() + 1);
             file.write(reinterpret_cast<const char*>(&buffer[i].manager_id), sizeof(int));
         }
-
+        
         // Update slot directory with the correct offset after writing to file
         for (size_t i = 0; i < buffer.size(); ++i) {
             slotDirectory[i].first += sizeof(int) + buffer[i].name.size() + buffer[i].bio.size() + sizeof(int);
         }
-
-        // Write slot directory to file
-        for (const auto& entry : slotDirectory) {
-            file.write(reinterpret_cast<const char*>(&entry.first), sizeof(int));
-            file.write(reinterpret_cast<const char*>(&entry.second), sizeof(int));
-        }
-
         file.close();
     }
 
